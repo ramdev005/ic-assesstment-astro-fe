@@ -1,0 +1,30 @@
+FROM node:20.12.2-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm@9.4.0
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Install all dependencies (including dev dependencies)
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S astro -u 1001
+
+# Change ownership of the app directory
+RUN chown -R astro:nodejs /app
+USER astro
+
+# Expose port
+EXPOSE 4321
+
+# Start the development server
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0"]

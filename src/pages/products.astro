@@ -1,0 +1,17 @@
+---
+// Astro page for Product Management
+import { ProductManagementApp } from '../components/ProductManagementApp';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Product Management - Shopping Cart</title>
+  </head>
+  <body>
+    <ProductManagementApp client:only="react" />
+  </body>
+</html>
