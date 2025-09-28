@@ -15,14 +15,6 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S astro -u 1001
-
-# Change ownership of the app directory
-RUN chown -R astro:nodejs /app
-USER astro
-
 # Expose port
 EXPOSE 4321
 

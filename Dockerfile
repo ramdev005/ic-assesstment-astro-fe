@@ -16,7 +16,17 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build the application
+# Accept all environment variables at build time and expose to the build process
+ARG PUBLIC_API_URL
+ARG PUBLIC_APP_NAME
+ARG PUBLIC_APP_VERSION
+ARG PUBLIC_ANALYTICS_ID
+ENV PUBLIC_API_URL=${PUBLIC_API_URL}
+ENV PUBLIC_APP_NAME=${PUBLIC_APP_NAME}
+ENV PUBLIC_APP_VERSION=${PUBLIC_APP_VERSION}
+ENV PUBLIC_ANALYTICS_ID=${PUBLIC_ANALYTICS_ID}
+
+# Build the application (Astro/Vite will read PUBLIC_* from env at build time)
 RUN pnpm run build
 
 # Production stage
