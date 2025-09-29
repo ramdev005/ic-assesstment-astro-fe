@@ -1,6 +1,6 @@
 node_modules
 npm-debug.log
-dist
+# dist # Allow dist for prebuild approach
 coverage
 .nyc_output
 .git
@@ -15,3 +15,11 @@ README.md
 *.log
 test
 docs
+.vscode
+.astro
+test-dist
+*.md
+jest.config.js
+tailwind.config.mjs
+tsconfig.json
+tsconfig.build.json

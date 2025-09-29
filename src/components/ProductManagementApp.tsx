@@ -16,6 +16,7 @@ export const ProductManagementApp: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const {
     products,
@@ -36,7 +37,12 @@ export const ProductManagementApp: React.FC = () => {
   // Load products on component mount
   useEffect(() => {
     if (isClient) {
-      fetchProducts();
+      // Try to fetch products but don't block UI if it fails
+      fetchProducts().catch((error) => {
+        console.warn('Failed to fetch products on mount:', error);
+        setApiError('Unable to connect to the server. Please check if the backend is running.');
+        // Component will still render with empty products array
+      });
     }
   }, [fetchProducts, isClient]);
 
@@ -63,8 +69,10 @@ export const ProductManagementApp: React.FC = () => {
       };
       await createProduct(productData as Omit<Product, 'id' | 'createdAt' | 'updatedAt'>);
       setShowCreateModal(false);
+      setApiError(null); // Clear any previous API errors
     } catch (error) {
       console.error('Failed to create product:', error);
+      setApiError('Failed to create product. Please try again.');
     }
   };
 
@@ -82,8 +90,10 @@ export const ProductManagementApp: React.FC = () => {
       await updateProduct(editingProduct.id, cleanedData as UpdateProductFormData);
       setShowEditModal(false);
       setEditingProduct(null);
+      setApiError(null); // Clear any previous API errors
     } catch (error) {
       console.error('Failed to update product:', error);
+      setApiError('Failed to update product. Please try again.');
     }
   };
 
@@ -101,8 +111,10 @@ export const ProductManagementApp: React.FC = () => {
       await deleteProduct(deletingProduct.id);
       setShowDeleteModal(false);
       setDeletingProduct(null);
+      setApiError(null); // Clear any previous API errors
     } catch (error) {
       console.error('Failed to delete product:', error);
+      setApiError('Failed to delete product. Please try again.');
     }
   };
 
@@ -112,14 +124,11 @@ export const ProductManagementApp: React.FC = () => {
     setDeletingProduct(null);
   };
 
-
   // Handle edit button click
   const handleEditClick = (product: Product) => {
     setEditingProduct(product);
     setShowEditModal(true);
   };
-
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -143,7 +152,7 @@ export const ProductManagementApp: React.FC = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Message */}
-        {error && (
+        {(error || apiError) && (
           <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
             <div className="flex">
               <div className="flex-shrink-0">
@@ -154,10 +163,13 @@ export const ProductManagementApp: React.FC = () => {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800">Error</h3>
                 <div className="mt-2 text-sm text-red-700">
-                  <p>{error}</p>
+                  <p>{error || apiError}</p>
                 </div>
                 <div className="mt-4">
-                  <Button size="sm" variant="outline" onClick={clearError}>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    clearError();
+                    setApiError(null);
+                  }}>
                     Dismiss
                   </Button>
                 </div>
@@ -211,7 +223,6 @@ export const ProductManagementApp: React.FC = () => {
           />
         )}
       </Modal>
-
 
       {/* Delete Confirmation Modal */}
       <Modal
@@ -269,4 +280,3 @@ export const ProductManagementApp: React.FC = () => {
     </div>
   );
 };
-

@@ -1,6 +1,7 @@
 ---
 // Astro page for Product Management
 import { ProductManagementApp } from '../components/ProductManagementApp';
+import '../styles/global.css';
 ---
 
 <html lang="en">
@@ -12,6 +13,6 @@ import { ProductManagementApp } from '../components/ProductManagementApp';
     <title>Product Management - Shopping Cart</title>
   </head>
   <body>
-    <ProductManagementApp client:only="react" />
+    <ProductManagementApp client:load />
   </body>
 </html>
